@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0] - 2024-12-11
+
+### Added
+
+- New `ToOPAInputValue` function to prepare a map or slice for use as `rego.EvalParsedInput`. This is much
+  faster than letting OPA do the conversion, but will only work for inputs created by this library.
+- Add optimized `AnyToValue` implementation similar to `InterfaceToValue` provided by OPA, but tailored
+  only for the use case of converting an AST `map[string]any` to a `ast.Value`. Highly optimized.
+- New `encoding.JSONRoundTrip(from, to)` and `encoding.MustJSONRoundTrip(from, to)` convenience functions
+- Bump OPA dependency to v0.70.0
+
 ## [0.4.2] - 2024-10-03
 
 ### Changed
@@ -18,7 +29,7 @@
 
 ### Changed
 
-- New location format 
+- New location format
 - Removed `name` attribute from rules in favor of using the rule's `ref` to infer name
 - Updated OPA version from v0.68.0 to v0.69.0
 

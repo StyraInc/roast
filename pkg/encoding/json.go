@@ -1,6 +1,8 @@
 package encoding
 
 import (
+	"log"
+
 	jsoniter "github.com/json-iterator/go"
 
 	_ "github.com/anderseknert/roast/internal/encoding"
@@ -12,4 +14,21 @@ import (
 // which will happen automatically on import.
 func JSON() jsoniter.API {
 	return jsoniter.ConfigFastest
+}
+
+// JSONRoundTrip convert any value to JSON and back again.
+func JSONRoundTrip(from any, to any) error {
+	bs, err := jsoniter.ConfigFastest.Marshal(from)
+	if err != nil {
+		return err
+	}
+
+	return jsoniter.ConfigFastest.Unmarshal(bs, to)
+}
+
+// MustJSONRoundTrip convert any value to JSON and back again, exit on failure.
+func MustJSONRoundTrip(from any, to any) {
+	if err := JSONRoundTrip(from, to); err != nil {
+		log.Fatal(err)
+	}
 }

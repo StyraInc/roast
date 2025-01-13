@@ -1,9 +1,11 @@
 package encoding
 
 import (
-	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
 	"testing"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 func TestRuleHeadEncoding(t *testing.T) {

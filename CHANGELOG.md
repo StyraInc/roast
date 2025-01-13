@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0] - 2025-01-14
+
+### Changed
+
+- Bump OPA dependency to 1.0.0, and update imports to v1
+- Faster encoding of Term's by avoiding OPA's TypeName
+
 ## [0.5.0] - 2024-12-11
 
 ### Added

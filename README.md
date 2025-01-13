@@ -159,7 +159,6 @@ The optimized Rego AST format discards generated bodies entirely, and the same r
 {
   "head": {
     "location": "5:1:5:11",
-    "name": "collection",
     "ref": [
       {
         "location": "5:1:5:11",
@@ -196,7 +195,7 @@ In the original AST, each expression in a body carries a numeric `index` attribu
 it is largely redundant, as the same number can be inferred from the order of the expressions in the body array. It's
 therefore been removed from the Roast format.
 
-### Removed`name` attribute from rule heads
+### Removed `name` attribute from rule heads
 
 The `name` attribute found in the OPA AST for `rules` is unreliable, as it's not always present. The `ref`
 attribute however always is.  While this doesn't come with any real cost in terms of AST size or performance, consistency
@@ -216,14 +215,3 @@ uses `text` and `location` consistently.
 
 While the numbers may vary some, the Roast format is currently about 40-50% smaller in size than the original AST JSON
 format, and can be processed (in Rego, using `walk` and so on) about 1.25 times faster.
-
-## Potential improvements
-
-### Replace `text` in `location` string with end location
-
-While it's not known how much of an impact it has on traversal speed / performance, a large chunk of the bytes in the
-current optimized AST are base64-encoded `text` values in `location` strings. These could be replaced with the end
-location of any given node. Rather than base64-encoding the the bytes of the text in serialization, we could instead
-count the number of newlines in the text, and from that plus the number of bytes on the last line (if more than one)
-determine the end location. It would then be assumed that the client has the means to translate that into the
-equivalence of `text` where necessary. Regal could for example easily do this from `input.regal.file.lines`.

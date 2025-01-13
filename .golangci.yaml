@@ -1,0 +1,76 @@
+linters:
+  enable-all: true
+  disable:
+    # annoying
+    - forcetypeassert
+    - gocyclo
+    - tagliatelle
+    - nestif
+    - gocognit
+    - varnamelen
+    - nonamedreturns
+    - testpackage
+    - goconst
+    - gochecknoinits
+    - gochecknoglobals
+    - mnd
+    - inamedparam
+    - err113
+    - godox
+    - exhaustruct
+    - cyclop
+    - ireturn
+    - funlen
+    - gomoddirectives # need replacements for wasip1
+    - exportloopref # deprecated
+    - wrapcheck
+linters-settings:
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+
+  revive:
+    rules:
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#unused-parameter
+      - name: unused-parameter
+        severity: warning
+        disabled: false
+        arguments:
+          - allowRegex: "^_"
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#unused-receiver
+      - name: unused-receiver
+        severity: warning
+        disabled: false
+        arguments:
+          - allowRegex: "^_"
+
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/open-policy-agent/opa)
+      - prefix(github.com/styrainc/regal)
+      - prefix(github.com/styrainc/roast)
+      - blank
+      - dot
+
+  depguard:
+    rules:
+      main:
+        deny:
+          - pkg: "gopkg.in/yaml.v2"
+            desc: use yaml.v3 only
+
+issues:
+  exclude-dirs:
+    - internal/lsp/opa
+  exclude-files:
+    # For whatever reason, the exclude-dirs setting isn't honored when
+    # golangci-lint is targeting one of these files *specifically* rather
+    # than whole whole workspace / directory. This happens when opening up
+    # one of these files in VS Code, which will have the linter complain
+    # loudly. Hopefully this workaround can be removed in the future.
+    - oracle.go
+    - scanner.go
+    - tokens.go

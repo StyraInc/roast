@@ -1,12 +1,14 @@
 package encoding
 
 import (
-	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
 	"net/url"
 	"os"
 	"reflect"
 	"testing"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 func TestAnnotationsEncoding(t *testing.T) {

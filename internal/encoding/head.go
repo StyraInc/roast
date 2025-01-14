@@ -1,9 +1,11 @@
 package encoding
 
 import (
-	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
 	"unsafe"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 type headCodec struct{}
@@ -18,6 +20,7 @@ func (*headCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 	stream.WriteObjectStart()
 
 	var hasWritten bool
+
 	if head.Location != nil {
 		stream.WriteObjectField(strLocation)
 		stream.WriteVal(head.Location)

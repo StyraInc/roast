@@ -3,12 +3,12 @@ package transform
 import (
 	"reflect"
 
+	"github.com/anderseknert/roast/internal/transforms"
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/open-policy-agent/opa/ast"
+	"github.com/open-policy-agent/opa/v1/ast"
 
 	_ "github.com/anderseknert/roast/internal/encoding"
-	"github.com/anderseknert/roast/internal/transforms"
 )
 
 // InterfaceToValue converts a native Go value x to a Value.
@@ -48,14 +48,18 @@ func ToOPAInputValue(x any) (ast.Value, error) {
 // put through util.RoundTrip().
 func reference(x any) *any {
 	var y any
+
 	rv := reflect.ValueOf(x)
 	if rv.Kind() == reflect.Ptr {
 		return reference(rv.Elem().Interface())
 	}
+
 	if rv.Kind() != reflect.Invalid {
 		y = rv.Interface()
+
 		return &y
 	}
+
 	return &x
 }
 
@@ -64,5 +68,6 @@ func anyPtrRoundTrip(x *any) error {
 	if err != nil {
 		return err
 	}
+
 	return jsoniter.ConfigFastest.Unmarshal(bs, x)
 }

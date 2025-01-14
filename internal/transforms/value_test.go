@@ -4,12 +4,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/open-policy-agent/opa/ast"
-
 	"github.com/anderseknert/roast/pkg/encoding"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 func TestRoastAndOPAInterfaceToValueSameOutput(t *testing.T) {
+	t.Parallel()
+
 	inputMap := inputMap(t)
 
 	roastValue, err := AnyToValue(inputMap)
@@ -28,6 +30,7 @@ func TestRoastAndOPAInterfaceToValueSameOutput(t *testing.T) {
 }
 
 // BenchmarkInterfaceToValue-10    	 741	   1615548 ns/op	 1376979 B/op	   24189 allocs/op
+// ...
 func BenchmarkInterfaceToValue(b *testing.B) {
 	inputMap := inputMapB(b)
 
@@ -43,6 +46,8 @@ func BenchmarkInterfaceToValue(b *testing.B) {
 }
 
 // BenchmarkOPAInterfaceToValue-10    	616	   1942695 ns/op	 1566569 B/op	   45901 allocs/op
+// BenchmarkOPAInterfaceToValue-10    	626	   1838247 ns/op	 1566848 B/op	   36037 allocs/op OPA 1.0
+// ...
 func BenchmarkOPAInterfaceToValue(b *testing.B) {
 	inputMap := inputMapB(b)
 

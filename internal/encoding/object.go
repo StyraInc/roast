@@ -1,10 +1,12 @@
 package encoding
 
 import (
-	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
 	"sync"
 	"unsafe"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 type objectCodec struct{}

@@ -2,7 +2,8 @@ package encoding
 
 import (
 	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 func writeTermsArray(stream *jsoniter.Stream, items []*ast.Term) {

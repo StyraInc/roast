@@ -3,7 +3,7 @@ package encoding
 import (
 	"testing"
 
-	"github.com/open-policy-agent/opa/ast"
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 // Simple routine check to see that things are working as expected.

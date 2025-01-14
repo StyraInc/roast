@@ -6,7 +6,8 @@ import (
 	"strconv"
 
 	"github.com/anderseknert/roast/pkg/util"
-	"github.com/open-policy-agent/opa/ast"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 var (
@@ -120,144 +121,6 @@ var (
 		"severity",
 	}
 
-	minusOneValue = [1]ast.Value{ast.Number("-1")}
-
-	intToValue = [...]ast.Value{
-		ast.Number("0"),
-		ast.Number("1"),
-		ast.Number("2"),
-		ast.Number("3"),
-		ast.Number("4"),
-		ast.Number("5"),
-		ast.Number("6"),
-		ast.Number("7"),
-		ast.Number("8"),
-		ast.Number("9"),
-		ast.Number("10"),
-		ast.Number("11"),
-		ast.Number("12"),
-		ast.Number("13"),
-		ast.Number("14"),
-		ast.Number("15"),
-		ast.Number("16"),
-		ast.Number("17"),
-		ast.Number("18"),
-		ast.Number("19"),
-		ast.Number("20"),
-		ast.Number("21"),
-		ast.Number("22"),
-		ast.Number("23"),
-		ast.Number("24"),
-		ast.Number("25"),
-		ast.Number("26"),
-		ast.Number("27"),
-		ast.Number("28"),
-		ast.Number("29"),
-		ast.Number("30"),
-		ast.Number("31"),
-		ast.Number("32"),
-		ast.Number("33"),
-		ast.Number("34"),
-		ast.Number("35"),
-		ast.Number("36"),
-		ast.Number("37"),
-		ast.Number("38"),
-		ast.Number("39"),
-		ast.Number("40"),
-		ast.Number("41"),
-		ast.Number("42"),
-		ast.Number("43"),
-		ast.Number("44"),
-		ast.Number("45"),
-		ast.Number("46"),
-		ast.Number("47"),
-		ast.Number("48"),
-		ast.Number("49"),
-		ast.Number("50"),
-		ast.Number("51"),
-		ast.Number("52"),
-		ast.Number("53"),
-		ast.Number("54"),
-		ast.Number("55"),
-		ast.Number("56"),
-		ast.Number("57"),
-		ast.Number("58"),
-		ast.Number("59"),
-		ast.Number("60"),
-		ast.Number("61"),
-		ast.Number("62"),
-		ast.Number("63"),
-		ast.Number("64"),
-		ast.Number("65"),
-		ast.Number("66"),
-		ast.Number("67"),
-		ast.Number("68"),
-		ast.Number("69"),
-		ast.Number("70"),
-		ast.Number("71"),
-		ast.Number("72"),
-		ast.Number("73"),
-		ast.Number("74"),
-		ast.Number("75"),
-		ast.Number("76"),
-		ast.Number("77"),
-		ast.Number("78"),
-		ast.Number("79"),
-		ast.Number("80"),
-		ast.Number("81"),
-		ast.Number("82"),
-		ast.Number("83"),
-		ast.Number("84"),
-		ast.Number("85"),
-		ast.Number("86"),
-		ast.Number("87"),
-		ast.Number("88"),
-		ast.Number("89"),
-		ast.Number("90"),
-		ast.Number("91"),
-		ast.Number("92"),
-		ast.Number("93"),
-		ast.Number("94"),
-		ast.Number("95"),
-		ast.Number("96"),
-		ast.Number("97"),
-		ast.Number("98"),
-		ast.Number("99"),
-		ast.Number("100"),
-		ast.Number("101"),
-		ast.Number("102"),
-		ast.Number("103"),
-		ast.Number("104"),
-		ast.Number("105"),
-		ast.Number("106"),
-		ast.Number("107"),
-		ast.Number("108"),
-		ast.Number("109"),
-		ast.Number("110"),
-		ast.Number("111"),
-		ast.Number("112"),
-		ast.Number("113"),
-		ast.Number("114"),
-		ast.Number("115"),
-		ast.Number("116"),
-		ast.Number("117"),
-		ast.Number("118"),
-		ast.Number("119"),
-		ast.Number("120"),
-		ast.Number("121"),
-		ast.Number("122"),
-		ast.Number("123"),
-		ast.Number("124"),
-		ast.Number("125"),
-		ast.Number("126"),
-		ast.Number("127"),
-	}
-
-	booleanValues = [2]ast.Value{
-		ast.Boolean(false),
-		ast.Boolean(true),
-	}
-
 	nullValue = [1]ast.Value{
 		ast.Null{},
 	}
@@ -269,6 +132,9 @@ var (
 	commonStringValues map[string]ast.Value
 
 	commonStringTerms map[string]*ast.Term
+
+	emptyObject = ast.NewObject()
+	emptyArray  = ast.NewArray()
 )
 
 func init() {
@@ -303,21 +169,11 @@ func AnyToValue(x any) (ast.Value, error) {
 	case nil:
 		return nullValue[0], nil
 	case bool:
-		if x {
-			return booleanValues[1], nil
-		}
-
-		return booleanValues[0], nil
+		return ast.InternedBooleanTerm(x).Value, nil
 	case float64:
 		ix := int(x)
 		if x == float64(ix) {
-			if ix == -1 {
-				return minusOneValue[0], nil
-			}
-
-			if ix >= 0 && ix < len(intToValue) {
-				return intToValue[ix], nil
-			}
+			return ast.InternedIntNumberTerm(ix).Value, nil
 		}
 
 		return ast.Number(strconv.FormatFloat(x, 'g', -1, 64)), nil
@@ -328,6 +184,10 @@ func AnyToValue(x any) (ast.Value, error) {
 
 		return ast.String(x), nil
 	case []string:
+		if len(x) == 0 {
+			return emptyArray, nil
+		}
+
 		r := util.NewPtrSlice[ast.Term](len(x))
 
 		for i, e := range x {
@@ -340,6 +200,10 @@ func AnyToValue(x any) (ast.Value, error) {
 
 		return ast.NewArray(r...), nil
 	case []any:
+		if len(x) == 0 {
+			return emptyArray, nil
+		}
+
 		r := util.NewPtrSlice[ast.Term](len(x))
 
 		for i, e := range x {
@@ -353,6 +217,10 @@ func AnyToValue(x any) (ast.Value, error) {
 
 		return ast.NewArray(r...), nil
 	case map[string]any:
+		if len(x) == 0 {
+			return emptyObject, nil
+		}
+
 		kvs := util.NewPtrSlice[ast.Term](len(x) * 2)
 		idx := 0
 
@@ -364,6 +232,7 @@ func AnyToValue(x any) (ast.Value, error) {
 				if err != nil {
 					return nil, err
 				}
+
 				kvs[idx].Value = t
 			}
 
@@ -382,9 +251,7 @@ func AnyToValue(x any) (ast.Value, error) {
 			tuples[i/2] = *(*[2]*ast.Term)(kvs[i : i+2])
 		}
 
-		r := ast.NewObject(tuples...)
-
-		return r, nil
+		return ast.NewObject(tuples...), nil
 	default:
 		panic(fmt.Sprintf("%v: unsupported type: %T", x, x))
 	}

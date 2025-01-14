@@ -6,12 +6,12 @@ import (
 )
 
 // Allocation free conversion from []byte to string (unsafe)
-// Note that the byte slice must not be modified after conversion
+// Note that the byte slice must not be modified after conversion.
 func ByteSliceToString(bs []byte) string {
 	return unsafe.String(unsafe.SliceData(bs), len(bs))
 }
 
-// Allocation free conversion from string to []byte (unsafe)
+// Allocation free conversion from string to []byte (unsafe).
 func StringToByteSlice(s string) []byte {
 	return unsafe.Slice(unsafe.StringData(s), len(s))
 }
@@ -21,6 +21,7 @@ func StringToByteSlice(s string) []byte {
 func NewPtrSlice[T any](n int) []*T {
 	s := make([]*T, n)
 	p := make([]T, n)
+
 	for i := range s {
 		s[i] = &p[i]
 	}
@@ -32,7 +33,8 @@ func NewPtrSlice[T any](n int) []*T {
 func GrowPtrSlice[T any](s []*T, n int) []*T {
 	s = slices.Grow(s, n)
 	p := make([]T, n)
-	for i := 0; i < n; i++ {
+
+	for i := range n {
 		s = append(s, &p[i])
 	}
 

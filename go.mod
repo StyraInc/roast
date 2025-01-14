@@ -1,10 +1,12 @@
 module github.com/anderseknert/roast
 
-go 1.22.5
+go 1.22.7
+
+toolchain go1.23.4
 
 require (
 	github.com/json-iterator/go v1.1.12
-	github.com/open-policy-agent/opa v0.70.0
+	github.com/open-policy-agent/opa v1.0.0
 )
 
 require (

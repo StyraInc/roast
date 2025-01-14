@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 func TestAnnotationsOnPackage(t *testing.T) {

@@ -2,9 +2,11 @@ package encoding
 
 import (
 	"encoding/base64"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/open-policy-agent/opa/ast"
 	"unsafe"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"github.com/open-policy-agent/opa/v1/ast"
 )
 
 type commentCodec struct{}

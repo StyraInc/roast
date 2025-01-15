@@ -3,8 +3,9 @@ package transform
 import (
 	"reflect"
 
-	"github.com/anderseknert/roast/internal/transforms"
 	jsoniter "github.com/json-iterator/go"
+
+	"github.com/anderseknert/roast/internal/transforms"
 
 	"github.com/open-policy-agent/opa/v1/ast"
 

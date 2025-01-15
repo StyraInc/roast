@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0] -
+
+### Changed
+
+- Annotations scoped `rule` or `document` no longer serialized under the `package` node, but found under each
+  respective rule only. Marginal performance improvement, but certainly more correct.
+
 ## [0.6.0] - 2025-01-14
 
 ### Changed

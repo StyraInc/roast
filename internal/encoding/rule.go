@@ -5,6 +5,8 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/anderseknert/roast/internal/encoding/util"
+
 	"github.com/open-policy-agent/opa/v1/ast"
 )
 
@@ -34,17 +36,7 @@ func (*ruleCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		}
 
 		stream.WriteObjectField(strAnnotations)
-		stream.WriteArrayStart()
-
-		for i, ann := range rule.Annotations {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(ann)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteValsArray(stream, rule.Annotations)
 
 		hasWritten = true
 	}

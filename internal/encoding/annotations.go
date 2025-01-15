@@ -5,6 +5,8 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/anderseknert/roast/internal/encoding/util"
+
 	"github.com/open-policy-agent/opa/v1/ast"
 )
 
@@ -49,86 +51,31 @@ func (*annotationsCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 	if len(a.Organizations) > 0 {
 		stream.WriteMore()
 		stream.WriteObjectField(strOrganizations)
-		stream.WriteArrayStart()
-
-		for i, org := range a.Organizations {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteString(org)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteStringsArray(stream, a.Organizations)
 	}
 
 	if len(a.RelatedResources) > 0 {
 		stream.WriteMore()
 		stream.WriteObjectField(strRelatedResources)
-		stream.WriteArrayStart()
-
-		for i, res := range a.RelatedResources {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(res)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteValsArray(stream, a.RelatedResources)
 	}
 
 	if len(a.Authors) > 0 {
 		stream.WriteMore()
 		stream.WriteObjectField(strAuthors)
-		stream.WriteArrayStart()
-
-		for i, author := range a.Authors {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(author)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteValsArray(stream, a.Authors)
 	}
 
 	if len(a.Schemas) > 0 {
 		stream.WriteMore()
 		stream.WriteObjectField(strSchemas)
-		stream.WriteArrayStart()
-
-		for i, schema := range a.Schemas {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(schema)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteValsArray(stream, a.Schemas)
 	}
 
 	if len(a.Custom) > 0 {
 		stream.WriteMore()
 		stream.WriteObjectField(strCustom)
-		stream.WriteObjectStart()
-
-		i := 0
-
-		for key, value := range a.Custom {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteObjectField(key)
-			stream.WriteVal(value)
-
-			i++
-		}
-
-		stream.WriteObjectEnd()
+		util.WriteObject(stream, a.Custom)
 	}
 
 	stream.WriteObjectEnd()

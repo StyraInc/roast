@@ -5,6 +5,9 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
+	encutil "github.com/anderseknert/roast/internal/encoding/util"
+	"github.com/anderseknert/roast/pkg/util"
+
 	"github.com/open-policy-agent/opa/v1/ast"
 )
 
@@ -25,7 +28,7 @@ func (*moduleCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		stream.WriteObjectField(strPackage)
 
 		if len(mod.Annotations) > 0 {
-			stream.Attachment = mod.Annotations
+			stream.Attachment = util.Filter(mod.Annotations, notDocumentOrRuleScope)
 		}
 
 		stream.WriteVal(mod.Package)
@@ -40,17 +43,7 @@ func (*moduleCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		}
 
 		stream.WriteObjectField(strImports)
-		stream.WriteArrayStart()
-
-		for i, imp := range mod.Imports {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(imp)
-		}
-
-		stream.WriteArrayEnd()
+		encutil.WriteValsArray(stream, mod.Imports)
 
 		hasWritten = true
 	}
@@ -61,17 +54,7 @@ func (*moduleCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		}
 
 		stream.WriteObjectField(strRules)
-		stream.WriteArrayStart()
-
-		for i, rule := range mod.Rules {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(rule)
-		}
-
-		stream.WriteArrayEnd()
+		encutil.WriteValsArray(stream, mod.Rules)
 
 		hasWritten = true
 	}
@@ -82,18 +65,12 @@ func (*moduleCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		}
 
 		stream.WriteObjectField(strComments)
-		stream.WriteArrayStart()
-
-		for i, comment := range mod.Comments {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(comment)
-		}
-
-		stream.WriteArrayEnd()
+		encutil.WriteValsArray(stream, mod.Comments)
 	}
 
 	stream.WriteObjectEnd()
+}
+
+func notDocumentOrRuleScope(a *ast.Annotations) bool {
+	return a.Scope != "document" && a.Scope != "rule"
 }

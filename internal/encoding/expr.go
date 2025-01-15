@@ -5,6 +5,8 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/anderseknert/roast/internal/encoding/util"
+
 	"github.com/open-policy-agent/opa/v1/ast"
 )
 
@@ -56,17 +58,7 @@ func (*exprCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		}
 
 		stream.WriteObjectField(strWith)
-		stream.WriteArrayStart()
-
-		for i, with := range expr.With {
-			if i > 0 {
-				stream.WriteMore()
-			}
-
-			stream.WriteVal(with)
-		}
-
-		stream.WriteArrayEnd()
+		util.WriteValsArray(stream, expr.With)
 
 		hasWritten = true
 	}

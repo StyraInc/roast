@@ -135,3 +135,14 @@ func MustReadFile(t *testing.T, path string) []byte {
 
 	return bs
 }
+
+func MustReadFileBench(b *testing.B, path string) []byte {
+	b.Helper()
+
+	bs, err := os.ReadFile(path)
+	if err != nil {
+		b.Fatalf("failed to read file %s: %v", path, err)
+	}
+
+	return bs
+}

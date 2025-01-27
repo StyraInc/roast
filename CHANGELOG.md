@@ -1,9 +1,10 @@
 # Changelog
 
-## [0.7.0] -
+## [0.7.0] - 2025-01-27
 
 ### Changed
 
+- Bump OPA dependency to 1.1.0
 - Annotations scoped `rule` or `document` no longer serialized under the `package` node, but found under each
   respective rule only. Marginal performance improvement, but certainly more correct.
 

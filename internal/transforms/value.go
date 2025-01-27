@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/anderseknert/roast/pkg/util"
-
 	"github.com/open-policy-agent/opa/v1/ast"
+	"github.com/open-policy-agent/opa/v1/util"
 )
 
 var (

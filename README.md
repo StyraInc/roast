@@ -1,11 +1,16 @@
 # Roast (Regal's Optimized AST)
 
 Roast is an optimized JSON format for [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) ASTs, as well
-as some common utilities for working with it.
+as common utilities for working with the both the Roast format and OPA's AST APIs.
 
 Roast is used by [Regal](https://docs.styra.com/regal), where the JSON representation of Rego's AST is used input for
 static analysis [performed by Rego itself](https://www.styra.com/blog/linting-rego-with-rego/) to determine whether
 policies conform to Regal's linter rules.
+
+> [!IMPORTANT]
+> This library changes frequently and provides no guarantees for what its API looks like. Depending on this library
+> directly is not recommended! If you find any code here useful, feel free to use it as your own in your projects, but
+> be aware that it may change at any time, and you may be better off copy-pasting whatever code you need.
 
 ## Goals
 
@@ -14,9 +19,10 @@ policies conform to Regal's linter rules.
 - As easy to read as the original AST JSON format
 
 While this module provides a way to encode an `ast.Module` to an optimized JSON format, it does not provide a decoder.
-In other words, there's no way to turn optimized AST JSON back into an `ast.Module` (or other AST types). While this
-would be possible to do, there's no real need for that given our current use-case for this format, which is to help work
-with the AST efficiently in Rego. Roast should not be considered a general purpose format for serializing the Rego AST.
+In other words, there's currently no way to turn optimized AST JSON back into an `ast.Module` (or other AST types).
+While this would be possible to do, there's no real need for that given our current use-case for this format, which is
+to help work with the AST efficiently in Rego. Roast should not be considered a general purpose format for serializing
+the Rego AST.
 
 ## Differences
 
@@ -215,3 +221,8 @@ uses `text` and `location` consistently.
 
 While the numbers may vary some, the Roast format is currently about 40-50% smaller in size than the original AST JSON
 format, and can be processed (in Rego, using `walk` and so on) about 1.25 times faster.
+
+## Community
+
+If you'd like to discuss OPA's AST, Roast or anything else related to OPA and Styra, please join us in the `#regal`
+channel in the Styra Community [Slack](https://communityinviter.com/apps/styracommunity/signup)!

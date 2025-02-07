@@ -37,7 +37,7 @@ func BenchmarkInterfaceToValue(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		_, err := AnyToValue(inputMap)
 		if err != nil {
 			b.Fatal(err)
@@ -54,7 +54,7 @@ func BenchmarkOPAInterfaceToValue(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		_, err := ast.InterfaceToValue(inputMap)
 		if err != nil {
 			b.Fatal(err)

@@ -15,7 +15,7 @@ func TestRuleHeadEncoding(t *testing.T) {
 		Name: "omitted",
 		Reference: ast.Ref{
 			{
-				Value: ast.String("foo"),
+				Value: ast.Var("foo"),
 				Location: &ast.Location{
 					Row:  1,
 					Col:  1,
@@ -31,7 +31,6 @@ func TestRuleHeadEncoding(t *testing.T) {
 				},
 			},
 		},
-
 		Value: &ast.Term{
 			Value: ast.Boolean(true),
 			Location: &ast.Location{
@@ -58,7 +57,7 @@ func TestRuleHeadEncoding(t *testing.T) {
   "ref": [
     {
       "location": "1:1:1:4",
-      "type": "string",
+      "type": "var",
       "value": "foo"
     },
     {
@@ -77,5 +76,45 @@ func TestRuleHeadEncoding(t *testing.T) {
 
 	if string(bs) != expect {
 		t.Fatalf("expected %s but got %s", expect, string(bs))
+	}
+}
+
+func TestRuleHeadEncodingStripsLocationOfGeneratedValue(t *testing.T) {
+	t.Parallel()
+
+	head := ast.MustParseRule(`p[x] if { x := 1 }`).Head
+
+	bs, err := jsoniter.ConfigFastest.MarshalIndent(head, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := `{
+  "location": "1:1:1:5",
+  "ref": [
+    {
+      "location": "1:1:1:2",
+      "type": "var",
+      "value": "p"
+    },
+    {
+      "location": "1:3:1:4",
+      "type": "var",
+      "value": "x"
+    }
+  ],
+  "key": {
+    "location": "1:3:1:4",
+    "type": "var",
+    "value": "x"
+  },
+  "value": {
+    "type": "boolean",
+    "value": true
+  }
+}`
+
+	if string(bs) != expected {
+		t.Fatalf("expected %s but got %s", expected, string(bs))
 	}
 }

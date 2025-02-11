@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/anderseknert/roast/pkg/intern"
-
 	"github.com/open-policy-agent/opa/v1/ast"
 	"github.com/open-policy-agent/opa/v1/util"
+
+	"github.com/styrainc/roast/pkg/intern"
 )
 
 // AnyToValue converts a native Go value x to a Value.

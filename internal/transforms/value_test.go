@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/anderseknert/roast/pkg/encoding"
-
 	"github.com/open-policy-agent/opa/v1/ast"
+
+	"github.com/styrainc/roast/pkg/encoding"
 )
 
 func TestRoastAndOPAInterfaceToValueSameOutput(t *testing.T) {

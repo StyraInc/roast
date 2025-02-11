@@ -1,9 +1,9 @@
 package intern
 
 import (
-	"github.com/anderseknert/roast/internal/intern"
-
 	"github.com/open-policy-agent/opa/v1/ast"
+
+	"github.com/styrainc/roast/internal/intern"
 )
 
 // TODO: move to OPA.

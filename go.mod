@@ -1,4 +1,4 @@
-module github.com/anderseknert/roast
+module github.com/styrainc/roast
 
 go 1.22.7
 

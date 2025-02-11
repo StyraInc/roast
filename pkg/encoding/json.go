@@ -5,7 +5,7 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	_ "github.com/anderseknert/roast/internal/encoding"
+	_ "github.com/styrainc/roast/internal/encoding"
 )
 
 // JSON returns the fastest jsoniter configuration

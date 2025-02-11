@@ -5,9 +5,9 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/anderseknert/roast/internal/encoding/util"
-
 	"github.com/open-policy-agent/opa/v1/ast"
+
+	"github.com/styrainc/roast/internal/encoding/util"
 )
 
 type ruleCodec struct{}

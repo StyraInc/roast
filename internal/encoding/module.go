@@ -5,10 +5,10 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	encutil "github.com/anderseknert/roast/internal/encoding/util"
-	"github.com/anderseknert/roast/pkg/util"
-
 	"github.com/open-policy-agent/opa/v1/ast"
+
+	encutil "github.com/styrainc/roast/internal/encoding/util"
+	"github.com/styrainc/roast/pkg/util"
 )
 
 type moduleCodec struct{}

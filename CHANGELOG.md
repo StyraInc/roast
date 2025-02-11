@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.1] - 2025-02-11
+
+### Changed
+
+- Update go.mod module path
+
 ## [0.8.0] - 2025-02-11
 
 ### Changed

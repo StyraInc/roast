@@ -10,13 +10,13 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/anderseknert/roast/internal/transforms"
-	"github.com/anderseknert/roast/pkg/encoding"
-	"github.com/anderseknert/roast/pkg/intern"
-
 	"github.com/open-policy-agent/opa/v1/ast"
 
-	_ "github.com/anderseknert/roast/internal/encoding"
+	"github.com/styrainc/roast/internal/transforms"
+	"github.com/styrainc/roast/pkg/encoding"
+	"github.com/styrainc/roast/pkg/intern"
+
+	_ "github.com/styrainc/roast/internal/encoding"
 )
 
 var (

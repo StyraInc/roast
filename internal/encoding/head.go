@@ -77,6 +77,13 @@ func (*headCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 			stream.WriteMore()
 		}
 
+		// Strip location from generated `true` values, as they don't have one
+		if head.Value.Location != nil && head.Location != nil {
+			if head.Value.Location.Row == head.Location.Row && head.Value.Location.Col == head.Location.Col {
+				head.Value.Location = nil
+			}
+		}
+
 		stream.WriteObjectField(strValue)
 		stream.WriteVal(head.Value)
 	}

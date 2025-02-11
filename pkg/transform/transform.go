@@ -1,15 +1,36 @@
 package transform
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 
 	jsoniter "github.com/json-iterator/go"
 
 	"github.com/anderseknert/roast/internal/transforms"
+	"github.com/anderseknert/roast/pkg/encoding"
+	"github.com/anderseknert/roast/pkg/intern"
 
 	"github.com/open-policy-agent/opa/v1/ast"
 
 	_ "github.com/anderseknert/roast/internal/encoding"
+)
+
+var (
+	pathSeparatorTerm = ast.StringTerm(string(os.PathSeparator))
+
+	environment [2]*ast.Term = ast.Item(intern.StringTerm("environment"), ast.ObjectTerm(
+		ast.Item(intern.StringTerm("path_separator"), pathSeparatorTerm),
+	))
+
+	operationsLintItem        = ast.Item(intern.StringTerm("operations"), ast.ArrayTerm(intern.StringTerm("lint")))
+	operationsLintCollectItem = ast.Item(intern.StringTerm("operations"), ast.ArrayTerm(
+		intern.StringTerm("lint"),
+		intern.StringTerm("collect")),
+	)
 )
 
 // InterfaceToValue converts a native Go value x to a Value.
@@ -71,4 +92,54 @@ func anyPtrRoundTrip(x *any) error {
 	}
 
 	return jsoniter.ConfigFastest.Unmarshal(bs, x)
+}
+
+func ToAST(name string, content string, module *ast.Module, collect bool) (ast.Value, error) {
+	var preparedAST map[string]any
+
+	if err := encoding.JSONRoundTrip(module, &preparedAST); err != nil {
+		return nil, fmt.Errorf("JSON rountrip failed for module: %w", err)
+	}
+
+	astObj, err := ToOPAInputValue(preparedAST)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert prepared AST to OPA input value: %w", err)
+	}
+
+	if input, ok := astObj.(ast.Object); ok {
+		abs, _ := filepath.Abs(name)
+
+		var operations [2]*ast.Term
+		if collect {
+			operations = operationsLintCollectItem
+		} else {
+			operations = operationsLintItem
+		}
+
+		input.Insert(intern.StringTerm("regal"), ast.ObjectTerm(
+			ast.Item(intern.StringTerm("file"), ast.ObjectTerm(
+				ast.Item(intern.StringTerm("name"), ast.StringTerm(name)),
+				ast.Item(intern.StringTerm("lines"), linesArrayTerm(content)),
+				ast.Item(intern.StringTerm("abs"), ast.StringTerm(abs)),
+				ast.Item(intern.StringTerm("rego_version"), intern.StringTerm(module.RegoVersion().String())),
+			)),
+			environment,
+			operations,
+		))
+
+		return input, nil
+	}
+
+	return nil, errors.New("prepared AST failed")
+}
+
+func linesArrayTerm(content string) *ast.Term {
+	parts := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
+	terms := make([]*ast.Term, len(parts))
+
+	for i := range parts {
+		terms[i] = intern.StringTerm(parts[i])
+	}
+
+	return ast.ArrayTerm(terms...)
 }

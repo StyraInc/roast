@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0] - 2025-02-11
+
+### Changed
+
+- Repo now resides under the StyraInc org
+- Don't print location for object rule with implied true value
+- Copy concurrent map code from Regal to here
+- Copy Set implementation from Regal to here
+- Use ast.ValueName from OPA now that it's been upstreamed
+- Add a few more common string terms for interning
+- Add ToAST function to build entire Regal AST in Roast
+- Better organization of interned values and terms
+
 ## [0.7.0] - 2025-01-27
 
 ### Changed

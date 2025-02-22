@@ -1,8 +1,8 @@
 package encoding
 
 import (
+	"embed"
 	"net/url"
-	"os"
 	"reflect"
 	"testing"
 
@@ -10,6 +10,9 @@ import (
 
 	"github.com/open-policy-agent/opa/v1/ast"
 )
+
+//go:embed testdata
+var testData embed.FS
 
 func TestAnnotationsEncoding(t *testing.T) {
 	t.Parallel()
@@ -92,7 +95,7 @@ func TestAnnotationsEncoding(t *testing.T) {
 		t.Fatalf("failed to unmarshal JSON: %v", err)
 	}
 
-	expected := MustReadFile(t, "testdata/annotations_all.json")
+	expected := mustReadTestFile(t, "testdata/annotations_all.json")
 
 	var expectedMap map[string]any
 
@@ -125,24 +128,11 @@ func mapToAnyPointer(m map[string]any) *any {
 	return &p
 }
 
-func MustReadFile(t *testing.T, path string) []byte {
-	t.Helper()
-
-	bs, err := os.ReadFile(path)
+func mustReadTestFile(tb testing.TB, path string) []byte {
+	tb.Helper()
+	b, err := testData.ReadFile(path)
 	if err != nil {
-		t.Fatalf("failed to read file %s: %v", path, err)
+		tb.Fatalf("Read file %s: %v", path, err)
 	}
-
-	return bs
-}
-
-func MustReadFileBench(b *testing.B, path string) []byte {
-	b.Helper()
-
-	bs, err := os.ReadFile(path)
-	if err != nil {
-		b.Fatalf("failed to read file %s: %v", path, err)
-	}
-
-	return bs
+	return b
 }

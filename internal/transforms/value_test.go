@@ -1,13 +1,16 @@
 package transforms
 
 import (
-	"os"
+	"embed"
 	"testing"
 
 	"github.com/open-policy-agent/opa/v1/ast"
 
 	"github.com/styrainc/roast/pkg/encoding"
 )
+
+//go:embed testdata
+var testData embed.FS
 
 func TestRoastAndOPAInterfaceToValueSameOutput(t *testing.T) {
 	t.Parallel()
@@ -65,10 +68,7 @@ func BenchmarkOPAInterfaceToValue(b *testing.B) {
 func inputMap(t *testing.T) map[string]any {
 	t.Helper()
 
-	bs, err := os.ReadFile("testdata/ast.rego")
-	if err != nil {
-		t.Fatal(err)
-	}
+	bs := mustReadTestFile(t, "testdata/ast.rego")
 
 	content := string(bs)
 
@@ -89,10 +89,7 @@ func inputMap(t *testing.T) map[string]any {
 func inputMapB(b *testing.B) map[string]any {
 	b.Helper()
 
-	bs, err := os.ReadFile("testdata/ast.rego")
-	if err != nil {
-		b.Fatal(err)
-	}
+	bs := mustReadTestFile(b, "testdata/ast.rego")
 
 	content := string(bs)
 
@@ -108,4 +105,13 @@ func inputMapB(b *testing.B) map[string]any {
 	}
 
 	return inputMap
+}
+
+func mustReadTestFile(tb testing.TB, path string) []byte {
+	tb.Helper()
+	b, err := testData.ReadFile(path)
+	if err != nil {
+		tb.Fatalf("Read file %s: %v", path, err)
+	}
+	return b
 }

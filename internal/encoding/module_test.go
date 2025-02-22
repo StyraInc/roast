@@ -212,7 +212,7 @@ func TestRuleAndDocumentScopedAnnotationsOnPackageAreDropped(t *testing.T) {
 func TestSerializedModuleSize(t *testing.T) {
 	t.Parallel()
 
-	policy := MustReadFile(t, "testdata/policy.rego")
+	policy := mustReadTestFile(t, "testdata/policy.rego")
 	module := ast.MustParseModuleWithOpts(string(policy), ast.ParserOptions{
 		ProcessAnnotation: true,
 	})
@@ -236,7 +236,7 @@ func TestSerializedModuleSize(t *testing.T) {
 // BenchmarkSerializeModule-10    	    2488	    479095 ns/op	  217090 B/op	    9805 allocs/op
 
 func BenchmarkSerializeModule(b *testing.B) {
-	policy := MustReadFileBench(b, "testdata/policy.rego")
+	policy := mustReadTestFile(b, "testdata/policy.rego")
 	module := ast.MustParseModuleWithOpts(string(policy), ast.ParserOptions{
 		ProcessAnnotation: true,
 	})

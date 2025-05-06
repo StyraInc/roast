@@ -1,16 +1,16 @@
 module github.com/styrainc/roast
 
-go 1.22.7
+go 1.23.8
 
-toolchain go1.23.4
+toolchain go1.24.2
 
 require (
 	github.com/json-iterator/go v1.1.12
-	github.com/open-policy-agent/opa v1.1.0
+	github.com/open-policy-agent/opa v1.4.2
 )
 
 require (
-	github.com/OneOfOne/xxhash v1.2.8 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

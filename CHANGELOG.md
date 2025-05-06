@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.0] - 2025-05-06
+
+- OPA v1.4.2
+- Bump minor Go versions in go.mod
+
 ## [0.8.1] - 2025-02-11
 
 ### Changed

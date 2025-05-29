@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.10.0] - 2025-05-29
+
+- Bump OPA dependency to v1.5.0
+- Use OPA's own interning when possible (more to follow in this area)
+
 ## [0.9.0] - 2025-05-06
 
 - OPA v1.4.2

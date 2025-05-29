@@ -32,7 +32,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		return intern.StringValue(x), nil
 	case []string:
 		if len(x) == 0 {
-			return intern.EmptyArray, nil
+			return ast.InternedEmptyArrayValue, nil
 		}
 
 		r := util.NewPtrSlice[ast.Term](len(x))
@@ -44,7 +44,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		return ast.NewArray(r...), nil
 	case []any:
 		if len(x) == 0 {
-			return intern.EmptyArray, nil
+			return ast.InternedEmptyArrayValue, nil
 		}
 
 		r := util.NewPtrSlice[ast.Term](len(x))

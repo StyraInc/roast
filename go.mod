@@ -6,7 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/json-iterator/go v1.1.12
-	github.com/open-policy-agent/opa v1.4.2
+	github.com/open-policy-agent/opa v1.5.0
 )
 
 require (

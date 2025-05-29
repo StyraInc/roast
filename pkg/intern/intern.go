@@ -6,15 +6,12 @@ import (
 	"github.com/styrainc/roast/internal/intern"
 )
 
-// TODO: move to OPA.
-var EmptyArray = ast.NewArray()
-
 func StringTerm(s string) *ast.Term {
 	if t, ok := intern.StringTerms[s]; ok {
 		return t
 	}
 
-	return ast.StringTerm(s)
+	return ast.InternedStringTerm(s)
 }
 
 func StringValue(s string) ast.Value {

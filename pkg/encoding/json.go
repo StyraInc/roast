@@ -8,6 +8,15 @@ import (
 	_ "github.com/styrainc/roast/internal/encoding"
 )
 
+// Fallback config in case the faster number handling fails.
+// See: https://github.com/StyraInc/regal/issues/1592
+var safeNumberConfig = jsoniter.Config{
+	UseNumber:                     true,
+	EscapeHTML:                    false,
+	MarshalFloatWith6Digits:       true,
+	ObjectFieldMustBeSimpleString: true,
+}.Froze()
+
 // JSON returns the fastest jsoniter configuration
 // It is preferred using this function instead of jsoniter.ConfigFastest directly
 // as there as the init function needs to be called to register the custom types,
@@ -23,7 +32,11 @@ func JSONRoundTrip(from any, to any) error {
 		return err
 	}
 
-	return jsoniter.ConfigFastest.Unmarshal(bs, to)
+	if err = jsoniter.ConfigFastest.Unmarshal(bs, to); err != nil {
+		return safeNumberConfig.Unmarshal(bs, to)
+	}
+
+	return nil
 }
 
 // MustJSONRoundTrip convert any value to JSON and back again, exit on failure.

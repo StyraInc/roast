@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.0] - 2025-06-17
+
+- Fallback on slower JSON unmarshalling if fast unmarshalling fails
+  This fixes https://github.com/StyraInc/regal/issues/1592
+
 ## [0.10.0] - 2025-05-29
 
 - Bump OPA dependency to v1.5.0

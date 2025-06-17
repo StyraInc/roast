@@ -1,6 +1,10 @@
 package encoding
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	jsoniter "github.com/json-iterator/go"
+
+	_ "github.com/styrainc/roast/pkg/intern"
+)
 
 func init() {
 	jsoniter.RegisterTypeEncoder("ast.Module", &moduleCodec{})

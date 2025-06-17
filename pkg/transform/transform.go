@@ -14,7 +14,6 @@ import (
 
 	"github.com/styrainc/roast/internal/transforms"
 	"github.com/styrainc/roast/pkg/encoding"
-	"github.com/styrainc/roast/pkg/intern"
 
 	_ "github.com/styrainc/roast/internal/encoding"
 )
@@ -22,14 +21,17 @@ import (
 var (
 	pathSeparatorTerm = ast.StringTerm(string(os.PathSeparator))
 
-	environment [2]*ast.Term = ast.Item(intern.StringTerm("environment"), ast.ObjectTerm(
-		ast.Item(intern.StringTerm("path_separator"), pathSeparatorTerm),
+	environment [2]*ast.Term = ast.Item(ast.InternedStringTerm("environment"), ast.ObjectTerm(
+		ast.Item(ast.InternedStringTerm("path_separator"), pathSeparatorTerm),
 	))
 
-	operationsLintItem        = ast.Item(intern.StringTerm("operations"), ast.ArrayTerm(intern.StringTerm("lint")))
-	operationsLintCollectItem = ast.Item(intern.StringTerm("operations"), ast.ArrayTerm(
-		intern.StringTerm("lint"),
-		intern.StringTerm("collect")),
+	operationsLintItem = ast.Item(
+		ast.InternedStringTerm("operations"),
+		ast.ArrayTerm(ast.InternedStringTerm("lint")),
+	)
+	operationsLintCollectItem = ast.Item(ast.InternedStringTerm("operations"), ast.ArrayTerm(
+		ast.InternedStringTerm("lint"),
+		ast.InternedStringTerm("collect")),
 	)
 )
 
@@ -120,12 +122,12 @@ func ToAST(name string, content string, module *ast.Module, collect bool) (ast.V
 			operations = operationsLintItem
 		}
 
-		input.Insert(intern.StringTerm("regal"), ast.ObjectTerm(
-			ast.Item(intern.StringTerm("file"), ast.ObjectTerm(
-				ast.Item(intern.StringTerm("name"), ast.StringTerm(name)),
-				ast.Item(intern.StringTerm("lines"), linesArrayTerm(content)),
-				ast.Item(intern.StringTerm("abs"), ast.StringTerm(abs)),
-				ast.Item(intern.StringTerm("rego_version"), intern.StringTerm(module.RegoVersion().String())),
+		input.Insert(ast.InternedStringTerm("regal"), ast.ObjectTerm(
+			ast.Item(ast.InternedStringTerm("file"), ast.ObjectTerm(
+				ast.Item(ast.InternedStringTerm("name"), ast.StringTerm(name)),
+				ast.Item(ast.InternedStringTerm("lines"), linesArrayTerm(content)),
+				ast.Item(ast.InternedStringTerm("abs"), ast.StringTerm(abs)),
+				ast.Item(ast.InternedStringTerm("rego_version"), ast.InternedStringTerm(module.RegoVersion().String())),
 			)),
 			environment,
 			operations,
@@ -142,7 +144,7 @@ func linesArrayTerm(content string) *ast.Term {
 	terms := make([]*ast.Term, len(parts))
 
 	for i := range parts {
-		terms[i] = intern.StringTerm(parts[i])
+		terms[i] = ast.InternedStringTerm(parts[i])
 	}
 
 	return ast.ArrayTerm(terms...)

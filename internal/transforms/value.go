@@ -9,7 +9,7 @@ import (
 	"github.com/open-policy-agent/opa/v1/ast"
 	"github.com/open-policy-agent/opa/v1/util"
 
-	"github.com/styrainc/roast/pkg/intern"
+	_ "github.com/styrainc/roast/pkg/intern"
 )
 
 // AnyToValue converts a native Go value x to a Value.
@@ -34,7 +34,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		}
 		return ast.Number(x), nil
 	case string:
-		return intern.StringValue(x), nil
+		return ast.InternedStringTerm(x).Value, nil
 	case []string:
 		if len(x) == 0 {
 			return ast.InternedEmptyArrayValue, nil
@@ -43,7 +43,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		r := util.NewPtrSlice[ast.Term](len(x))
 
 		for i, s := range x {
-			r[i].Value = intern.StringValue(s)
+			r[i].Value = ast.InternedStringTerm(s).Value
 		}
 
 		return ast.NewArray(r...), nil
@@ -73,7 +73,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		idx := 0
 
 		for k, v := range x {
-			kvs[idx].Value = intern.StringValue(k)
+			kvs[idx].Value = ast.InternedStringTerm(k).Value
 
 			v, err := AnyToValue(v)
 			if err != nil {

@@ -1,23 +1,119 @@
 package intern
 
-import (
-	"github.com/open-policy-agent/opa/v1/ast"
+import "github.com/open-policy-agent/opa/v1/ast"
 
-	"github.com/styrainc/roast/internal/intern"
-)
+func init() {
+	ast.InternStringTerm(
+		// Rego
+		"",
+		" ",
+		",",
+		"/",
+		"}",
+		"},",
+		"\n",
+		"\n\n",
+		"\t",
+		"assign",
+		"description",
+		"equal",
+		"file",
+		"policy",
+		"rego",
+		"type",
+		"var",
+		"text",
+		"v1",
+		"union",
+		"IE1FVEFEQVRB", // METADATA as enconded in the comment nodes
+		"v0",
+		"v1",
+		"v0v1",
+		"unknown",
+		"import",
+		"# METADATA",
 
-func StringTerm(s string) *ast.Term {
-	if t, ok := intern.StringTerms[s]; ok {
-		return t
-	}
+		// These are strings commonly found in linter policies, but
+		// not necessarily anywhere else.
+		"}",
+		"ast",
+		"boolean",
+		"bugs",
+		"call",
+		"category",
+		"col",
+		"idiomatic",
+		"level",
+		"location",
+		"module",
+		"violation",
+		"term",
+		"r",
+		"regal",
+		"report",
+		"result",
+		"row",
+		"rule",
+		"rules",
+		"style",
+		"value",
+		"end",
+		"util",
 
-	return ast.InternedStringTerm(s)
-}
+		// OPA / Roast keys
+		"alias",
+		"assign",
+		"body",
+		"custom",
+		"default",
+		"else",
+		"entrypoint",
+		"head",
+		"imports",
+		"rules",
+		"comments",
+		"symbols",
+		"negated",
+		"key",
+		"term",
+		"domain",
+		"type",
+		"path",
+		"args",
+		"terms",
+		"text",
+		"with",
+		"target",
+		"capabilities",
 
-func StringValue(s string) ast.Value {
-	if v, ok := intern.StringValues[s]; ok {
-		return v
-	}
-
-	return ast.String(s)
+		// Regal specific keys
+		"file",
+		"abs",
+		"environment",
+		"path_separator",
+		"lines",
+		"operations",
+		"regal",
+		"severity",
+		"col",
+		"row",
+		"end",
+		"package_path",
+		"rule",
+		"category",
+		"completion",
+		"aggregate_source",
+		"aggregate_data",
+		"rego_version",
+		"negated_refs",
+		"ast",
+		"refs",
+		"config",
+		"lint",
+		"collect",
+		"lsp",
+		"modules",
+		"data.regal.ast",
+		"data.regal.config",
+	)
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.0] - 2025-06-17
+
+- Remove interning code and use OPA's interning, which wasn't
+  available when this library was created.
+
+## [0.11.2] - 2025-06-17
+
+- One more fix related to parsing big numbers
+
 ## [0.11.1] - 2025-06-17
 
 - Found and fixed another location where parsing big numbers

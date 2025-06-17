@@ -6,6 +6,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 
 	_ "github.com/styrainc/roast/internal/encoding"
+	_ "github.com/styrainc/roast/pkg/intern"
 )
 
 // Fallback config in case the faster number handling fails.

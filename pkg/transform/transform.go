@@ -91,7 +91,11 @@ func anyPtrRoundTrip(x *any) error {
 		return err
 	}
 
-	return jsoniter.ConfigFastest.Unmarshal(bs, x)
+	if err = jsoniter.ConfigFastest.Unmarshal(bs, x); err != nil {
+		return encoding.SafeNumberConfig.Unmarshal(bs, x)
+	}
+
+	return nil
 }
 
 func ToAST(name string, content string, module *ast.Module, collect bool) (ast.Value, error) {

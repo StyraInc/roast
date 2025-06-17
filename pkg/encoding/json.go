@@ -10,7 +10,7 @@ import (
 
 // Fallback config in case the faster number handling fails.
 // See: https://github.com/StyraInc/regal/issues/1592
-var safeNumberConfig = jsoniter.Config{
+var SafeNumberConfig = jsoniter.Config{
 	UseNumber:                     true,
 	EscapeHTML:                    false,
 	MarshalFloatWith6Digits:       true,
@@ -33,7 +33,7 @@ func JSONRoundTrip(from any, to any) error {
 	}
 
 	if err = jsoniter.ConfigFastest.Unmarshal(bs, to); err != nil {
-		return safeNumberConfig.Unmarshal(bs, to)
+		return SafeNumberConfig.Unmarshal(bs, to)
 	}
 
 	return nil

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.11.1] - 2025-06-17
+
+- Found and fixed another location where parsing big numbers
+  would fail.
+- Bump Go dependency to 1.24.3
+
 ## [0.11.0] - 2025-06-17
 
 - Fallback on slower JSON unmarshalling if fast unmarshalling fails

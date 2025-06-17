@@ -2,6 +2,7 @@
 package transforms
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -26,8 +27,12 @@ func AnyToValue(x any) (ast.Value, error) {
 		if x == float64(ix) {
 			return ast.InternedIntNumberTerm(ix).Value, nil
 		}
-
 		return ast.Number(strconv.FormatFloat(x, 'g', -1, 64)), nil
+	case json.Number:
+		if interned := ast.InternedIntNumberTermFromString(string(x)); interned != nil {
+			return interned.Value, nil
+		}
+		return ast.Number(x), nil
 	case string:
 		return intern.StringValue(x), nil
 	case []string:

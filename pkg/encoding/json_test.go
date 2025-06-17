@@ -59,3 +59,17 @@ test_foo if {
 		t.Fatal(err)
 	}
 }
+
+// https://github.com/StyraInc/regal/issues/1592
+func TestJSONRoundTripBigNumber(t *testing.T) {
+	t.Parallel()
+
+	module := ast.MustParseModule("package p\n\nn := 1e400")
+
+	var modMap map[string]any
+
+	err := JSONRoundTrip(module, &modMap)
+	if err != nil {
+		t.Fatalf("failed to marshal module: %v", err)
+	}
+}

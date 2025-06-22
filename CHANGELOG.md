@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.0] - 2025-06-22
+
+- New `rast` package to provide methods for converting structs
+  (or anything really) to RoAST and more, without going through
+  a JSON round trip. Still experimental.
+
 ## [0.12.0] - 2025-06-17
 
 - Remove interning code and use OPA's interning, which wasn't

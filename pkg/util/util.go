@@ -28,3 +28,14 @@ func Filter[T any](s []T, f func(T) bool) []T {
 
 	return r
 }
+
+// Map applies the function f to each element of s and returns a new slice.
+func Map[T, R any](s []T, f func(T) R) []R {
+	r := make([]R, len(s))
+
+	for i := range s {
+		r[i] = f(s[i])
+	}
+
+	return r
+}

@@ -49,7 +49,6 @@ func init() {
 		"violation",
 		"term",
 		"r",
-		"regal",
 		"report",
 		"result",
 		"row",

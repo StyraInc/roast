@@ -1,25 +1,25 @@
 package transform
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
 
 	jsoniter "github.com/json-iterator/go"
 
 	"github.com/open-policy-agent/opa/v1/ast"
 
 	"github.com/styrainc/roast/internal/transforms"
+	"github.com/styrainc/roast/internal/transforms/module"
 	"github.com/styrainc/roast/pkg/encoding"
+	"github.com/styrainc/roast/pkg/rast"
 
 	_ "github.com/styrainc/roast/internal/encoding"
 )
 
 var (
-	pathSeparatorTerm = ast.StringTerm(string(os.PathSeparator))
+	pathSeparatorTerm = ast.InternedStringTerm(string(os.PathSeparator))
 
 	environment [2]*ast.Term = ast.Item(ast.InternedStringTerm("environment"), ast.ObjectTerm(
 		ast.Item(ast.InternedStringTerm("path_separator"), pathSeparatorTerm),
@@ -33,7 +33,16 @@ var (
 		ast.InternedStringTerm("lint"),
 		ast.InternedStringTerm("collect")),
 	)
+
+	regalRef = ast.Ref{ast.InternedStringTerm("regal")}
 )
+
+// ModuleToValue provides the fastest possible path for converting a Rego
+// module to an ast.Value, which is the format used by OPA for its input,
+// i.e. via rego.EvalParsedInput.
+func ModuleToValue(mod *ast.Module) (ast.Value, error) {
+	return module.ToValue(mod)
+}
 
 // InterfaceToValue converts a native Go value x to a Value.
 // This is an optimized version of the same function in the OPA codebase,
@@ -61,6 +70,54 @@ func ToOPAInputValue(x any) (ast.Value, error) {
 	}
 
 	return value, nil
+}
+
+// ToAST converts a Rego module to an ast.Value suitable for use as input in Regal
+func ToAST(name, content string, mod *ast.Module, collect bool) (ast.Value, error) {
+	value, err := module.ToValue(mod)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert module to value: %w", err)
+	}
+
+	value.(ast.Object).Insert(ast.InternedStringTerm("regal"), ast.NewTerm(
+		RegalContextWithOperations(name, content, mod.RegoVersion().String(), collect),
+	))
+
+	return value, nil
+}
+
+// RegalContext creates a context object for a Regal input, containing the attributes
+// common to most / all Regal use cases.
+func RegalContext(name, content, regoVersion string) ast.Object {
+	abs, _ := filepath.Abs(name)
+
+	context := ast.NewObject(
+		ast.Item(ast.InternedStringTerm("file"), ast.ObjectTerm(
+			ast.Item(ast.InternedStringTerm("name"), ast.StringTerm(name)),
+			ast.Item(ast.InternedStringTerm("lines"), rast.LinesArrayTerm(content)),
+			ast.Item(ast.InternedStringTerm("abs"), ast.StringTerm(abs)),
+			ast.Item(ast.InternedStringTerm("rego_version"), ast.InternedStringTerm(regoVersion)),
+		)),
+		environment,
+	)
+
+	return context
+}
+
+// RegalContextWithOperations creates a Regal context object with operations
+// for linting or collecting, depending on the collect parameter.
+func RegalContextWithOperations(name, content, regoVersion string, collect bool) ast.Object {
+	var operations [2]*ast.Term
+	if collect {
+		operations = operationsLintCollectItem
+	} else {
+		operations = operationsLintItem
+	}
+
+	context := RegalContext(name, content, regoVersion)
+	context.Insert(operations[0], operations[1])
+
+	return context
 }
 
 // From OPA's util package
@@ -98,54 +155,4 @@ func anyPtrRoundTrip(x *any) error {
 	}
 
 	return nil
-}
-
-func ToAST(name string, content string, module *ast.Module, collect bool) (ast.Value, error) {
-	var preparedAST map[string]any
-
-	if err := encoding.JSONRoundTrip(module, &preparedAST); err != nil {
-		return nil, fmt.Errorf("JSON rountrip failed for module: %w", err)
-	}
-
-	astObj, err := ToOPAInputValue(preparedAST)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert prepared AST to OPA input value: %w", err)
-	}
-
-	if input, ok := astObj.(ast.Object); ok {
-		abs, _ := filepath.Abs(name)
-
-		var operations [2]*ast.Term
-		if collect {
-			operations = operationsLintCollectItem
-		} else {
-			operations = operationsLintItem
-		}
-
-		input.Insert(ast.InternedStringTerm("regal"), ast.ObjectTerm(
-			ast.Item(ast.InternedStringTerm("file"), ast.ObjectTerm(
-				ast.Item(ast.InternedStringTerm("name"), ast.StringTerm(name)),
-				ast.Item(ast.InternedStringTerm("lines"), linesArrayTerm(content)),
-				ast.Item(ast.InternedStringTerm("abs"), ast.StringTerm(abs)),
-				ast.Item(ast.InternedStringTerm("rego_version"), ast.InternedStringTerm(module.RegoVersion().String())),
-			)),
-			environment,
-			operations,
-		))
-
-		return input, nil
-	}
-
-	return nil, errors.New("prepared AST failed")
-}
-
-func linesArrayTerm(content string) *ast.Term {
-	parts := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
-	terms := make([]*ast.Term, len(parts))
-
-	for i := range parts {
-		terms[i] = ast.InternedStringTerm(parts[i])
-	}
-
-	return ast.ArrayTerm(terms...)
 }

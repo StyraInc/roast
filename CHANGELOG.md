@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.14.0] - 2025-06-24
+
+- Add utilities for converting ast.Module's to ast.Value's without
+  a round trip through JSON, or `map[string]any`. This effectively
+  halves the memory footprint of that operation, and is much faster.
+
 ## [0.13.0] - 2025-06-22
 
 - New `rast` package to provide methods for converting structs

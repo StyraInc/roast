@@ -24,8 +24,8 @@ func TestStructToValue(t *testing.T) {
 	}
 
 	expected := ast.NewObject(
-		ast.Item(ast.InternedStringTerm("field1"), ast.StringTerm("value1")),
-		ast.Item(ast.InternedStringTerm("field3"), ast.BooleanTerm(true)),
+		ast.Item(ast.InternedTerm("field1"), ast.StringTerm("value1")),
+		ast.Item(ast.InternedTerm("field3"), ast.BooleanTerm(true)),
 	)
 
 	result := rast.StructToValue(input)
@@ -54,9 +54,9 @@ func TestStructToValueNested(t *testing.T) {
 	}
 
 	expected := ast.NewObject(
-		ast.Item(ast.InternedStringTerm("field1"), ast.StringTerm("value1")),
-		ast.Item(ast.InternedStringTerm("field2"), ast.ObjectTerm(
-			ast.Item(ast.InternedStringTerm("nested_field"), ast.InternedIntNumberTerm(42)),
+		ast.Item(ast.InternedTerm("field1"), ast.StringTerm("value1")),
+		ast.Item(ast.InternedTerm("field2"), ast.ObjectTerm(
+			ast.Item(ast.InternedTerm("nested_field"), ast.InternedTerm(42)),
 		)),
 	)
 

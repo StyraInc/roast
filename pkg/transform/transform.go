@@ -19,22 +19,22 @@ import (
 )
 
 var (
-	pathSeparatorTerm = ast.InternedStringTerm(string(os.PathSeparator))
+	pathSeparatorTerm = ast.InternedTerm(string(os.PathSeparator))
 
-	environment [2]*ast.Term = ast.Item(ast.InternedStringTerm("environment"), ast.ObjectTerm(
-		ast.Item(ast.InternedStringTerm("path_separator"), pathSeparatorTerm),
+	environment [2]*ast.Term = ast.Item(ast.InternedTerm("environment"), ast.ObjectTerm(
+		ast.Item(ast.InternedTerm("path_separator"), pathSeparatorTerm),
 	))
 
 	operationsLintItem = ast.Item(
-		ast.InternedStringTerm("operations"),
-		ast.ArrayTerm(ast.InternedStringTerm("lint")),
+		ast.InternedTerm("operations"),
+		ast.ArrayTerm(ast.InternedTerm("lint")),
 	)
-	operationsLintCollectItem = ast.Item(ast.InternedStringTerm("operations"), ast.ArrayTerm(
-		ast.InternedStringTerm("lint"),
-		ast.InternedStringTerm("collect")),
+	operationsLintCollectItem = ast.Item(ast.InternedTerm("operations"), ast.ArrayTerm(
+		ast.InternedTerm("lint"),
+		ast.InternedTerm("collect")),
 	)
 
-	regalRef = ast.Ref{ast.InternedStringTerm("regal")}
+	regalRef = ast.Ref{ast.InternedTerm("regal")}
 )
 
 // ModuleToValue provides the fastest possible path for converting a Rego
@@ -79,7 +79,7 @@ func ToAST(name, content string, mod *ast.Module, collect bool) (ast.Value, erro
 		return nil, fmt.Errorf("failed to convert module to value: %w", err)
 	}
 
-	value.(ast.Object).Insert(ast.InternedStringTerm("regal"), ast.NewTerm(
+	value.(ast.Object).Insert(ast.InternedTerm("regal"), ast.NewTerm(
 		RegalContextWithOperations(name, content, mod.RegoVersion().String(), collect),
 	))
 
@@ -92,11 +92,11 @@ func RegalContext(name, content, regoVersion string) ast.Object {
 	abs, _ := filepath.Abs(name)
 
 	context := ast.NewObject(
-		ast.Item(ast.InternedStringTerm("file"), ast.ObjectTerm(
-			ast.Item(ast.InternedStringTerm("name"), ast.StringTerm(name)),
-			ast.Item(ast.InternedStringTerm("lines"), rast.LinesArrayTerm(content)),
-			ast.Item(ast.InternedStringTerm("abs"), ast.StringTerm(abs)),
-			ast.Item(ast.InternedStringTerm("rego_version"), ast.InternedStringTerm(regoVersion)),
+		ast.Item(ast.InternedTerm("file"), ast.ObjectTerm(
+			ast.Item(ast.InternedTerm("name"), ast.StringTerm(name)),
+			ast.Item(ast.InternedTerm("lines"), rast.LinesArrayTerm(content)),
+			ast.Item(ast.InternedTerm("abs"), ast.StringTerm(abs)),
+			ast.Item(ast.InternedTerm("rego_version"), ast.InternedTerm(regoVersion)),
 		)),
 		environment,
 	)

@@ -79,11 +79,11 @@ func RefStringToBody(path string) ast.Body {
 		path = path[i+1:]
 		if i = strings.Index(path, "."); i == -1 {
 			if len(path) > 0 {
-				terms = append(terms, ast.InternedStringTerm(path))
+				terms = append(terms, ast.InternedTerm(path))
 			}
 			break
 		}
-		terms = append(terms, ast.InternedStringTerm(path[:i]))
+		terms = append(terms, ast.InternedTerm(path[:i]))
 	}
 
 	return ast.NewBody(ast.NewExpr(ast.RefTerm(terms...)))
@@ -104,11 +104,11 @@ func RefStringToRef(path string) ast.Ref {
 		path = path[i+1:]
 		if i = strings.Index(path, "."); i == -1 {
 			if len(path) > 0 {
-				terms = append(terms, ast.InternedStringTerm(path))
+				terms = append(terms, ast.InternedTerm(path))
 			}
 			break
 		}
-		terms = append(terms, ast.InternedStringTerm(path[:i]))
+		terms = append(terms, ast.InternedTerm(path[:i]))
 	}
 
 	return ast.Ref(terms)
@@ -120,7 +120,7 @@ func LinesArrayTerm(content string) *ast.Term {
 	terms := make([]*ast.Term, len(parts))
 
 	for i := range parts {
-		terms[i] = ast.InternedStringTerm(parts[i])
+		terms[i] = ast.InternedTerm(parts[i])
 	}
 
 	return ast.ArrayTerm(terms...)
@@ -163,7 +163,7 @@ func StructToValue(input any) ast.Value {
 				continue
 			}
 		}
-		kvs = append(kvs, ast.Item(ast.InternedStringTerm(tag), ast.NewTerm(toAstValue(value.Interface()))))
+		kvs = append(kvs, ast.Item(ast.InternedTerm(tag), ast.NewTerm(toAstValue(value.Interface()))))
 	}
 	return ast.NewObject(kvs...)
 }
@@ -225,9 +225,9 @@ func toAstValue(v any) ast.Value {
 			var k *ast.Term
 			ki := key.Interface()
 			if s, ok := ki.(string); ok {
-				k = ast.InternedStringTerm(s)
+				k = ast.InternedTerm(s)
 			} else {
-				k = ast.InternedStringTerm(fmt.Sprintf("%v", ki))
+				k = ast.InternedTerm(fmt.Sprintf("%v", ki))
 			}
 			kvs = append(kvs, [2]*ast.Term{k, internedAny(rv.MapIndex(key).Interface())})
 		}
@@ -241,7 +241,7 @@ func toAstValue(v any) ast.Value {
 	case reflect.Float32, reflect.Float64:
 		return ast.Number(fmt.Sprintf("%v", rv.Float()))
 	case reflect.Bool:
-		return ast.InternedBooleanTerm(rv.Bool()).Value
+		return ast.InternedTerm(rv.Bool()).Value
 	}
 	// Fallback: string representation
 	fmt.Println("WARNING: Unsupported type for conversion to ast.Value:", rv.Kind())
@@ -251,15 +251,15 @@ func toAstValue(v any) ast.Value {
 func internedAny(v any) *ast.Term {
 	switch value := any(v).(type) {
 	case bool:
-		return ast.InternedBooleanTerm(value)
+		return ast.InternedTerm(value)
 	case string:
-		return ast.InternedStringTerm(value)
+		return ast.InternedTerm(value)
 	case int:
-		return ast.InternedIntNumberTerm(value)
+		return ast.InternedTerm(value)
 	case uint:
-		return ast.InternedIntNumberTerm(int(value))
+		return ast.InternedTerm(int(value))
 	case int64:
-		return ast.InternedIntNumberTerm(int(value))
+		return ast.InternedTerm(int(value))
 	case float64:
 		return ast.FloatNumberTerm(value)
 	default:

@@ -21,20 +21,20 @@ func AnyToValue(x any) (ast.Value, error) {
 	case nil:
 		return ast.NullValue, nil
 	case bool:
-		return ast.InternedBooleanTerm(x).Value, nil
+		return ast.InternedTerm(x).Value, nil
 	case float64:
 		ix := int(x)
 		if x == float64(ix) {
-			return ast.InternedIntNumberTerm(ix).Value, nil
+			return ast.InternedTerm(ix).Value, nil
 		}
 		return ast.Number(strconv.FormatFloat(x, 'g', -1, 64)), nil
 	case json.Number:
-		if interned := ast.InternedIntNumberTermFromString(string(x)); interned != nil {
+		if interned := ast.InternedTerm(string(x)); interned != nil {
 			return interned.Value, nil
 		}
 		return ast.Number(x), nil
 	case string:
-		return ast.InternedStringTerm(x).Value, nil
+		return ast.InternedTerm(x).Value, nil
 	case []string:
 		if len(x) == 0 {
 			return ast.InternedEmptyArrayValue, nil
@@ -43,7 +43,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		r := util.NewPtrSlice[ast.Term](len(x))
 
 		for i, s := range x {
-			r[i].Value = ast.InternedStringTerm(s).Value
+			r[i].Value = ast.InternedTerm(s).Value
 		}
 
 		return ast.NewArray(r...), nil
@@ -73,7 +73,7 @@ func AnyToValue(x any) (ast.Value, error) {
 		idx := 0
 
 		for k, v := range x {
-			kvs[idx].Value = ast.InternedStringTerm(k).Value
+			kvs[idx].Value = ast.InternedTerm(k).Value
 
 			v, err := AnyToValue(v)
 			if err != nil {

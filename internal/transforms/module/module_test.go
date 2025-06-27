@@ -146,7 +146,7 @@ func BenchmarkObjectInsertManyVsObjectNew(b *testing.B) {
 		for b.Loop() {
 			obj := ast.NewObject()
 			for j := range n {
-				obj.Insert(ast.InternedStringTerm(strconv.Itoa(j)), ast.InternedStringTerm(strconv.Itoa(j)))
+				obj.Insert(ast.InternedTerm(strconv.Itoa(j)), ast.InternedTerm(strconv.Itoa(j)))
 			}
 			if obj.Len() != n {
 				b.Errorf("expected object length %d, got %d", n, obj.Len())
@@ -159,8 +159,8 @@ func BenchmarkObjectInsertManyVsObjectNew(b *testing.B) {
 			terms := make([][2]*ast.Term, 0, n)
 			for j := range n {
 				terms = append(terms, ast.Item(
-					ast.InternedStringTerm(strconv.Itoa(j)),
-					ast.InternedStringTerm(strconv.Itoa(j)),
+					ast.InternedTerm(strconv.Itoa(j)),
+					ast.InternedTerm(strconv.Itoa(j)),
 				))
 			}
 			obj := ast.NewObject(terms...)

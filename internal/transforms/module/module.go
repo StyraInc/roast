@@ -26,33 +26,33 @@ func ToValue(mod *ast.Module) (ast.Value, error) {
 			return nil, err
 		}
 
-		value.Insert(ast.InternedStringTerm("package"), ast.NewTerm(pkgValue))
+		value.Insert(ast.InternedTerm("package"), ast.NewTerm(pkgValue))
 	}
 
 	if len(mod.Imports) > 0 {
 		imports := make([]*ast.Term, len(mod.Imports))
 		for i, imp := range mod.Imports {
 			impObj := objectWithLocation(imp.Location)
-			impObj.Insert(ast.InternedStringTerm("path"), termToObjectLoc(imp.Path, true))
+			impObj.Insert(ast.InternedTerm("path"), termToObjectLoc(imp.Path, true))
 			if imp.Alias != "" {
-				impObj.Insert(ast.InternedStringTerm("alias"), ast.InternedStringTerm(string(imp.Alias)))
+				impObj.Insert(ast.InternedTerm("alias"), ast.InternedTerm(string(imp.Alias)))
 			}
 			imports[i] = ast.NewTerm(impObj)
 		}
-		value.Insert(ast.InternedStringTerm("imports"), ast.ArrayTerm(imports...))
+		value.Insert(ast.InternedTerm("imports"), ast.ArrayTerm(imports...))
 	}
 
 	if len(mod.Rules) > 0 {
-		value.Insert(ast.InternedStringTerm("rules"), ast.ArrayTerm(util.Map(mod.Rules, ruleToObject)...))
+		value.Insert(ast.InternedTerm("rules"), ast.ArrayTerm(util.Map(mod.Rules, ruleToObject)...))
 	}
 
 	if len(mod.Comments) > 0 {
 		comments := make([]*ast.Term, len(mod.Comments))
 		for i, comment := range mod.Comments {
 			encoded := base64.StdEncoding.EncodeToString(comment.Text)
-			comments[i] = ast.ObjectTerm(item("text", ast.InternedStringTerm(encoded)), locationItem(comment.Location))
+			comments[i] = ast.ObjectTerm(item("text", ast.InternedTerm(encoded)), locationItem(comment.Location))
 		}
-		value.Insert(ast.InternedStringTerm("comments"), ast.ArrayTerm(comments...))
+		value.Insert(ast.InternedTerm("comments"), ast.ArrayTerm(comments...))
 	}
 
 	return value, nil
@@ -62,7 +62,7 @@ func packageToValue(pkg *ast.Package, annotations []*ast.Annotations) (ast.Value
 	value := objectWithLocation(pkg.Location)
 
 	if pkg.Path != nil {
-		value.Insert(ast.InternedStringTerm("path"), pathArray(pkg.Path))
+		value.Insert(ast.InternedTerm("path"), pathArray(pkg.Path))
 	}
 
 	if len(annotations) > 0 {
@@ -73,7 +73,7 @@ func packageToValue(pkg *ast.Package, annotations []*ast.Annotations) (ast.Value
 			}
 		}
 		if len(pkgan) > 0 {
-			value.Insert(ast.InternedStringTerm("annotations"), ast.ArrayTerm(pkgan...))
+			value.Insert(ast.InternedTerm("annotations"), ast.ArrayTerm(pkgan...))
 		}
 	}
 
@@ -127,7 +127,7 @@ func locationItem(location *ast.Location) [2]*ast.Term {
 	sb.WriteByte(':')
 	sb.WriteString(strconv.Itoa(endCol))
 
-	return item("location", ast.InternedStringTerm(sb.String()))
+	return item("location", ast.InternedTerm(sb.String()))
 }
 
 func termToObjectLoc(term *ast.Term, includeLocation bool) *ast.Term {
@@ -140,13 +140,13 @@ func termToObjectLoc(term *ast.Term, includeLocation bool) *ast.Term {
 	if term.Value != nil {
 		if term.Location != nil && includeLocation {
 			return ast.ObjectTerm(
-				item("type", ast.InternedStringTerm(ast.ValueName(term.Value))),
+				item("type", ast.InternedTerm(ast.ValueName(term.Value))),
 				item("value", termValueTerm(term.Value)), // TODO: Interning
 				locationItem(term.Location),
 			)
 		}
 		return ast.ObjectTerm(
-			item("type", ast.InternedStringTerm(ast.ValueName(term.Value))),
+			item("type", ast.InternedTerm(ast.ValueName(term.Value))),
 			item("value", termValueTerm(term.Value)), // TODO: Interning
 		)
 	}
@@ -161,16 +161,16 @@ func termToObject(term *ast.Term) *ast.Term {
 func termValueTerm(val ast.Value) *ast.Term {
 	switch v := val.(type) {
 	case ast.Var:
-		return ast.InternedStringTerm(string(v))
+		return ast.InternedTerm(string(v))
 	case ast.Null:
 		return ast.InternedNullTerm
 	case ast.Boolean:
-		return ast.InternedBooleanTerm(bool(v))
+		return ast.InternedTerm(bool(v))
 	case ast.String:
-		return ast.InternedStringTerm(string(v))
+		return ast.InternedTerm(string(v))
 	case ast.Number:
 		if i, ok := v.Int(); ok {
-			return ast.InternedIntNumberTerm(i)
+			return ast.InternedTerm(i)
 		}
 	case ast.Ref:
 		return ast.ArrayTerm(util.Map(v, termToObject)...)
@@ -224,24 +224,24 @@ func annotationsToObject(a *ast.Annotations) ast.Object {
 	obj := objectWithLocation(a.Location)
 
 	if len(a.Scope) > 0 {
-		obj.Insert(ast.InternedStringTerm("scope"), ast.InternedStringTerm(a.Scope))
+		obj.Insert(ast.InternedTerm("scope"), ast.InternedTerm(a.Scope))
 	}
 
 	if len(a.Title) > 0 {
-		obj.Insert(ast.InternedStringTerm("title"), ast.InternedStringTerm(a.Title))
+		obj.Insert(ast.InternedTerm("title"), ast.InternedTerm(a.Title))
 	}
 
 	if a.Entrypoint {
-		obj.Insert(ast.InternedStringTerm("entrypoint"), ast.InternedBooleanTerm(true))
+		obj.Insert(ast.InternedTerm("entrypoint"), ast.InternedTerm(true))
 	}
 
 	if len(a.Description) > 0 {
-		obj.Insert(ast.InternedStringTerm("description"), ast.StringTerm(a.Description))
+		obj.Insert(ast.InternedTerm("description"), ast.StringTerm(a.Description))
 	}
 
 	if len(a.Organizations) > 0 {
-		orgs := util.Map(a.Organizations, ast.InternedStringTerm)
-		obj.Insert(ast.InternedStringTerm("organizations"), ast.ArrayTerm(orgs...))
+		orgs := util.Map(a.Organizations, ast.InternedTerm)
+		obj.Insert(ast.InternedTerm("organizations"), ast.ArrayTerm(orgs...))
 	}
 
 	if len(a.RelatedResources) > 0 {
@@ -249,11 +249,11 @@ func annotationsToObject(a *ast.Annotations) ast.Object {
 		for _, rr := range a.RelatedResources {
 			rrObj := ast.NewObject(item("ref", ast.StringTerm(rr.Ref.String())))
 			if len(rr.Description) > 0 {
-				rrObj.Insert(ast.InternedStringTerm("description"), ast.StringTerm(rr.Description))
+				rrObj.Insert(ast.InternedTerm("description"), ast.StringTerm(rr.Description))
 			}
 			rrs = append(rrs, ast.NewTerm(rrObj))
 		}
-		obj.Insert(ast.InternedStringTerm("related_resources"), ast.ArrayTerm(rrs...))
+		obj.Insert(ast.InternedTerm("related_resources"), ast.ArrayTerm(rrs...))
 	}
 
 	if len(a.Authors) > 0 {
@@ -261,14 +261,14 @@ func annotationsToObject(a *ast.Annotations) ast.Object {
 		for _, author := range a.Authors {
 			aObj := ast.NewObject()
 			if len(author.Name) > 0 {
-				aObj.Insert(ast.InternedStringTerm("name"), ast.InternedStringTerm(author.Name))
+				aObj.Insert(ast.InternedTerm("name"), ast.InternedTerm(author.Name))
 			}
 			if len(author.Email) > 0 {
-				aObj.Insert(ast.InternedStringTerm("email"), ast.InternedStringTerm(author.Email))
+				aObj.Insert(ast.InternedTerm("email"), ast.InternedTerm(author.Email))
 			}
 			as = append(as, ast.NewTerm(aObj))
 		}
-		obj.Insert(ast.InternedStringTerm("authors"), ast.ArrayTerm(as...))
+		obj.Insert(ast.InternedTerm("authors"), ast.ArrayTerm(as...))
 	}
 
 	if len(a.Schemas) > 0 {
@@ -276,21 +276,21 @@ func annotationsToObject(a *ast.Annotations) ast.Object {
 		for _, s := range a.Schemas {
 			sObj := ast.NewObject()
 			if len(s.Path) > 0 {
-				sObj.Insert(ast.InternedStringTerm("path"), ast.NewTerm(refToArray(s.Path)))
+				sObj.Insert(ast.InternedTerm("path"), ast.NewTerm(refToArray(s.Path)))
 			}
 			if len(s.Schema) > 0 {
-				sObj.Insert(ast.InternedStringTerm("schema"), ast.NewTerm(refToArray(s.Schema)))
+				sObj.Insert(ast.InternedTerm("schema"), ast.NewTerm(refToArray(s.Schema)))
 			}
 			if s.Definition != nil {
 				def, err := ast.InterfaceToValue(s.Definition)
 				if err != nil {
 					panic(err)
 				}
-				sObj.Insert(ast.InternedStringTerm("definition"), ast.NewTerm(def))
+				sObj.Insert(ast.InternedTerm("definition"), ast.NewTerm(def))
 			}
 			ss = append(ss, ast.NewTerm(sObj))
 		}
-		obj.Insert(ast.InternedStringTerm("schemas"), ast.ArrayTerm(ss...))
+		obj.Insert(ast.InternedTerm("schemas"), ast.ArrayTerm(ss...))
 	}
 
 	if len(a.Custom) > 0 {
@@ -298,7 +298,7 @@ func annotationsToObject(a *ast.Annotations) ast.Object {
 		if err != nil {
 			panic(err)
 		}
-		obj.Insert(ast.InternedStringTerm("custom"), ast.NewTerm(c))
+		obj.Insert(ast.InternedTerm("custom"), ast.NewTerm(c))
 	}
 
 	return obj
@@ -310,7 +310,7 @@ func refToArray(ref ast.Ref) *ast.Array {
 		if _, ok := term.Value.(ast.String); ok {
 			terms = append(terms, term)
 		} else {
-			terms = append(terms, ast.InternedStringTerm(term.Value.String()))
+			terms = append(terms, ast.InternedTerm(term.Value.String()))
 		}
 	}
 	return ast.NewArray(terms...)
@@ -326,24 +326,24 @@ func ruleToObject(rule *ast.Rule) *ast.Term {
 			annotations = append(annotations, ast.NewTerm(obj))
 		}
 		if len(annotations) > 0 {
-			obj.Insert(ast.InternedStringTerm("annotations"), ast.ArrayTerm(annotations...))
+			obj.Insert(ast.InternedTerm("annotations"), ast.ArrayTerm(annotations...))
 		}
 	}
 
 	if rule.Default {
-		obj.Insert(ast.InternedStringTerm("default"), ast.InternedBooleanTerm(true))
+		obj.Insert(ast.InternedTerm("default"), ast.InternedTerm(true))
 	}
 
 	if rule.Head != nil {
-		obj.Insert(ast.InternedStringTerm("head"), headToObject(rule.Head))
+		obj.Insert(ast.InternedTerm("head"), headToObject(rule.Head))
 	}
 
 	if !rast.IsBodyGenerated(rule) {
-		obj.Insert(ast.InternedStringTerm("body"), bodyToArray(rule.Body))
+		obj.Insert(ast.InternedTerm("body"), bodyToArray(rule.Body))
 	}
 
 	if rule.Else != nil {
-		obj.Insert(ast.InternedStringTerm("else"), ruleToObject(rule.Else))
+		obj.Insert(ast.InternedTerm("else"), ruleToObject(rule.Else))
 	}
 
 	return ast.NewTerm(obj)
@@ -353,19 +353,19 @@ func headToObject(head *ast.Head) *ast.Term {
 	obj := objectWithLocation(head.Location)
 
 	if head.Reference != nil {
-		obj.Insert(ast.InternedStringTerm("ref"), termValueTerm(head.Reference))
+		obj.Insert(ast.InternedTerm("ref"), termValueTerm(head.Reference))
 	}
 
 	if len(head.Args) > 0 {
-		obj.Insert(ast.InternedStringTerm("args"), ast.ArrayTerm(util.Map(head.Args, termToObject)...))
+		obj.Insert(ast.InternedTerm("args"), ast.ArrayTerm(util.Map(head.Args, termToObject)...))
 	}
 
 	if head.Assign {
-		obj.Insert(ast.InternedStringTerm("assign"), ast.InternedBooleanTerm(true))
+		obj.Insert(ast.InternedTerm("assign"), ast.InternedTerm(true))
 	}
 
 	if head.Key != nil {
-		obj.Insert(ast.InternedStringTerm("key"), termToObject(head.Key))
+		obj.Insert(ast.InternedTerm("key"), termToObject(head.Key))
 	}
 
 	if head.Value != nil {
@@ -376,7 +376,7 @@ func headToObject(head *ast.Head) *ast.Term {
 			}
 		}
 
-		obj.Insert(ast.InternedStringTerm("value"), termToObject(head.Value))
+		obj.Insert(ast.InternedTerm("value"), termToObject(head.Value))
 	}
 
 	return ast.NewTerm(obj)
@@ -402,15 +402,15 @@ func bodyToArray(body ast.Body) *ast.Term {
 		exprObj := objectWithLocation(expr.Location)
 
 		if expr.Negated {
-			exprObj.Insert(ast.InternedStringTerm("negated"), ast.InternedBooleanTerm(true))
+			exprObj.Insert(ast.InternedTerm("negated"), ast.InternedTerm(true))
 		}
 
 		if expr.Generated {
-			exprObj.Insert(ast.InternedStringTerm("generated"), ast.InternedBooleanTerm(expr.Generated))
+			exprObj.Insert(ast.InternedTerm("generated"), ast.InternedTerm(expr.Generated))
 		}
 
 		if len(expr.With) > 0 {
-			exprObj.Insert(ast.InternedStringTerm("with"), ast.ArrayTerm(util.Map(expr.With, withToObject)...))
+			exprObj.Insert(ast.InternedTerm("with"), ast.ArrayTerm(util.Map(expr.With, withToObject)...))
 		}
 
 		if expr.Terms != nil {
@@ -453,14 +453,14 @@ func objectWithLocation(loc *ast.Location) ast.Object {
 
 func item(key string, value *ast.Term) [2]*ast.Term {
 	if value == nil {
-		return [2]*ast.Term{ast.InternedStringTerm(key), ast.InternedNullTerm}
+		return [2]*ast.Term{ast.InternedTerm(key), ast.InternedNullTerm}
 	}
-	return [2]*ast.Term{ast.InternedStringTerm(key), value}
+	return [2]*ast.Term{ast.InternedTerm(key), value}
 }
 
 func insert(obj ast.Object, key string, value *ast.Term) {
 	if value == nil {
 		return
 	}
-	obj.Insert(ast.InternedStringTerm(key), value)
+	obj.Insert(ast.InternedTerm(key), value)
 }

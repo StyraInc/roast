@@ -1,11 +1,11 @@
 # Changelog
 
-## [1.15.0] - 2025-06-30
+## [0.15.0] - 2025-06-30
 
 - Switch to `ast.InternedTerm` to be compatible with the latest OPA release.
 - Bump OPA dependency to v1.6.0.
 
-## [1.14.0] - 2025-06-24
+## [0.14.0] - 2025-06-24
 
 - Add utilities for converting ast.Module's to ast.Value's without
   a round trip through JSON, or `map[string]any`. This effectively

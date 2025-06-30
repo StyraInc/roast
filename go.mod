@@ -4,7 +4,7 @@ go 1.24.3
 
 require (
 	github.com/json-iterator/go v1.1.12
-	github.com/open-policy-agent/opa v1.5.1-0.20250627085034-d3e83fbd7735
+	github.com/open-policy-agent/opa v1.6.0
 )
 
 require (
